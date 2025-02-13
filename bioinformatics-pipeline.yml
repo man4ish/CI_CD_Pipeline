@@ -1,0 +1,57 @@
+name: Bioinformatics Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  bioinformatics-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Set up R environment
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      # Install R dependencies
+      - name: Install R dependencies
+        run: |
+          install.packages(c('dplyr', 'ggplot2', 'data.table'))
+
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Install Python dependencies
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt  # Ensure you have a requirements.txt in your repo
+
+      # Set up XZ utility
+      - name: Install XZ
+        run: sudo apt-get install xz-utils
+
+      # Run the bash script
+      - name: Run Bioinformatics Pipeline
+        run: |
+          chmod +x ./run_pipeline.sh  # Ensure your script has execute permissions
+          ./run_pipeline.sh
+
+      # Upload the output files (Optional)
+      - name: Upload Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: pipeline-results
+          path: |
+            out/
+            out/figures/
