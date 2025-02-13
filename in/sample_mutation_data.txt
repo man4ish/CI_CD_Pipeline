@@ -1,0 +1,4 @@
+gene    mutation
+BRCA1   missense
+BRCA2   frameshift
+TP53    synonymous
